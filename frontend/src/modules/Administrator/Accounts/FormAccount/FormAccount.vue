@@ -23,7 +23,7 @@
       v-model="formData.currency"
       label="Selecciona la moneda de la cuenta bancaria"
       icon="attach_money"
-      placeholder="COP, USD, o EUR"
+      placeholder="COP, USD"
       :suggestions="currencyOptions"
       :errorMessage="getErrorMessage(v$.formData.currency)"
     />
@@ -69,7 +69,7 @@
       label="Tipo de cuenta"
       icon="category"
       type="text"
-      placeholder="Cuenta Corriente or Cuenta Ahorros"
+      placeholder="Cuenta Corriente o Cuenta Ahorros"
       :suggestions="accountCategoryOptions"
       :errorMessage="getErrorMessage(v$.formData.accountCategory)"
     />
@@ -122,7 +122,7 @@
       });
 
       const accountTypeOptions = ref(['Personal', 'Negocio']);
-      const currencyOptions = ref(['COP', 'USD', 'EUR']);
+      const currencyOptions = ref(['COP', 'USD']);
       const accountCategoryOptions = ref([
         'Cuenta Corriente',
         'Cuenta Ahorros',

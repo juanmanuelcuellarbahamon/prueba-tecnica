@@ -5,5 +5,5 @@ export class FundsDto {
   @IsPositive()
   amount: number;
   
-  currency: 'USD' | 'COP' | 'EUR';
+  currency: 'USD' | 'COP';
 }

@@ -3,15 +3,25 @@
     :data="transacctions"
     :columns="columns"
     :totalItems="transacctions.length"
-    :itemsPerPage="10"
+    :itemsPerPage="transacctions.length"
     :currentPage="1"
     :hideActions="true"
     :hideCreate="true"
+    :hidePagination="true"
   >
     <template #cell-createdAt="{ value }">
       <span class="custom-date">
         {{ formatDate(value) }}
       </span>
+    </template>
+    <template #cell-previousBalance="{ value }">
+      {{ value }} COP
+    </template>
+    <template #cell-newBalance="{ value }">
+      {{ value }} COP
+    </template>
+    <template #cell-amount="{ value }">
+      {{ value }} COP
     </template>
   </Datatable>
 </template>

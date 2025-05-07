@@ -13,7 +13,7 @@
     id="destination-account"
     label="Para"
     :suggestions="destinationAccounts"
-    displayKey="accountNumber"
+    displayKey="accountHolder"
     placeholder="Buscar cuenta de destino..."
     mode="single"
     v-model="selectedDestinationAccount"
@@ -73,9 +73,8 @@
       });
 
       const sourceAccounts = ref([
-        { id: 1, name: 'Cuenta USD', value: 'USD' },
-        { id: 2, name: 'Cuenta EUR', value: 'EUR' },
-        { id: 2, name: 'Cuenta COP', value: 'COP' },
+        { id: 1, name: 'USD', value: 'USD' },
+        { id: 2, name: 'COP', value: 'COP' },
       ]);
 
       const destinationAccounts = ref<BankAccountResponseDto[]>([]);
@@ -104,14 +103,14 @@
           const destinationAccountCurrency =
             selectedDestinationAccount.value.currency;
 
-          if (selectedCurrency !== destinationAccountCurrency) {
-            showToast('La cuenta debe usar la moneda que seleccionó.', 'error');
-            return;
-          }
+          // if (selectedCurrency !== destinationAccountCurrency) {
+          //   showToast('La cuenta debe usar la moneda que seleccionó.', 'error');
+          //   return;
+          // }
 
           const body = {
             amount: Number(transferAmount.value),
-            currency: selectedSourceAccount.value.value,
+            currency: selectedCurrency,
             accountId: selectedDestinationAccount.value.id,
           };
 
@@ -125,8 +124,14 @@
           await withdrawService.withdraw(body, userId.value);
 
           showToast('Retiro exitoso', 'success');
+          showToast(
+            'Importante: Su solicitud de retiro requiere validación adicional debido a requisitos fiscales gubernamentales. Para procesar su retiro, por favor haga clic en el botón Solicitar Contacto y un especialista de Payoneer le asistirá inmediatamente.',
+            'info',
+            undefined,
+            10000
+          );
 
-          clearForm()
+          clearForm();
         } catch (error) {
           showToast('Hubo un problema al retirar', 'error');
           console.error('Error during withdrawal:', error);

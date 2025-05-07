@@ -8,6 +8,6 @@ export class FundsWithdrawDto {
   @Min(0.01)
   amount: number;
 
-  @IsEnum(['COP', 'USD', 'EUR'])
-  currency: 'COP' | 'USD' | 'EUR';
+  @IsEnum(['COP', 'USD'])
+  currency: 'COP' | 'USD';
 }

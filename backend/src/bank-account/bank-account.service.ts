@@ -21,7 +21,9 @@ export class BankAccountService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createBankAccountDto: CreateBankAccountDto): Promise<BankAccount> {
+  async create(
+    createBankAccountDto: CreateBankAccountDto,
+  ): Promise<BankAccount> {
     const newAccount = this.bankAccountRepository.create(createBankAccountDto);
     return await this.bankAccountRepository.save(newAccount);
   }
@@ -60,12 +62,14 @@ export class BankAccountService {
     return account;
   }
 
+  private readonly COP_TO_USD_RATE = 0.00022;
+
   private async processFundsForUser(
     amount: number,
     userId: number,
     type: 'Deposit' | 'Withdrawal',
-    currency: 'USD' | 'COP' | 'EUR',
-    accountId: number, // Default to 0 for user-level operations
+    currency: 'USD' | 'COP',
+    accountId: number,
   ): Promise<{ message: string; newBalance: number }> {
     if (amount <= 0) {
       throw new BadRequestException(
@@ -73,51 +77,45 @@ export class BankAccountService {
       );
     }
 
-    // Fetch and validate the user
     const user = await this.getUserById(userId);
 
-    let balanceKey: keyof Pick<User, 'balanceUSD' | 'balanceCOP' | 'balanceEUR'>;
+    let withdrawAmountInCOP: number;
 
     switch (currency) {
       case 'USD':
-        balanceKey = 'balanceUSD';
+        withdrawAmountInCOP = this.convertUSDtoCOP(amount);
         break;
       case 'COP':
-        balanceKey = 'balanceCOP';
-        break;
-      case 'EUR':
-        balanceKey = 'balanceEUR';
+        withdrawAmountInCOP = amount;
         break;
       default:
         throw new BadRequestException('Invalid currency');
     }
 
+    const balanceKey = 'balanceCOP';
+
     const previousBalance = Number(user[balanceKey]);
 
-    // Check for sufficient balance for withdrawals
-    if (type === 'Withdrawal' && previousBalance < amount) {
+    if (type === 'Withdrawal' && previousBalance < withdrawAmountInCOP) {
       throw new BadRequestException('Insufficient funds');
     }
 
-    // Perform the deposit or withdrawal
     const newBalance =
       type === 'Deposit'
-        ? previousBalance + amount
-        : previousBalance - amount;
+        ? previousBalance + withdrawAmountInCOP
+        : previousBalance - withdrawAmountInCOP;
 
     user[balanceKey] = newBalance;
 
-    // Save the updated user balance
     await this.userRepository.save(user);
 
-    // Create a transaction record
     const transaction = this.transactionRepository.create({
       type,
-      amount,
+      amount: withdrawAmountInCOP,
       previousBalance,
       newBalance,
       userId,
-      accountId, // Use the provided accountId (default is 0 for user-level operations)
+      accountId,
       currency,
       createdAt: new Date(),
     });
@@ -130,10 +128,15 @@ export class BankAccountService {
     };
   }
 
+  private convertUSDtoCOP(amountInUSD: number): number {
+    const exchangeRate = 1 / this.COP_TO_USD_RATE;
+    return amountInUSD * exchangeRate;
+  }
+
   async addFundsToUser(
     amount: number,
     userId: number,
-    currency: 'USD' | 'COP' | 'EUR',
+    currency: 'USD' | 'COP',
   ): Promise<{ message: string; newBalance: number }> {
     return this.processFundsForUser(amount, userId, 'Deposit', currency, 0);
   }
@@ -141,10 +144,16 @@ export class BankAccountService {
   async withdrawFundsFromUser(
     amount: number,
     userId: number,
-    currency: 'USD' | 'COP' | 'EUR',
-    accountId: number
+    currency: 'USD' | 'COP',
+    accountId: number,
   ): Promise<{ message: string; newBalance: number }> {
-    return this.processFundsForUser(amount, userId, 'Withdrawal', currency, accountId); // Use accountId: 0 for user-level withdrawals
+    return this.processFundsForUser(
+      amount,
+      userId,
+      'Withdrawal',
+      currency,
+      accountId,
+    );
   }
 
   async getAllTransactions(): Promise<Transaction[]> {
@@ -167,7 +176,9 @@ export class BankAccountService {
     });
   }
 
-  async getUserBalance(userId: number): Promise<{ balanceUSD: number; balanceCOP: number; balanceEUR: number }> {
+  async getUserBalance(
+    userId: number,
+  ): Promise<{ balanceUSD: number; balanceCOP: number; balanceEUR: number }> {
     const user = await this.getUserById(userId);
 
     return {
