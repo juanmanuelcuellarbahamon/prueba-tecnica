@@ -7,9 +7,6 @@ This repository contains a full-stack application built using **NestJS** for the
 - [Installation](#installation)
   - [Backend](#backend)
   - [Frontend](#frontend)
-- [Postman Collection](#postman-collection)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Project Structure
 
