@@ -12,12 +12,13 @@ This repository contains a full-stack application built using **NestJS** for the
 
 The project is organized into the following directories:
 
-├── backend # NestJS backend
-├── frontend # Vue.js frontend with Vite
+.
+├── backend          # NestJS backend
+├── frontend        # Vue.js frontend with Vite
 ├── docker-compose.yml # Docker Compose configuration
-├── LICENSE # License information
+├── LICENSE         # License information
 ├── PRUEBA TECNICA.postman_collection # Postman API collection
-└── README.md # This file
+└── README.md       # This file
 
 ## Prerequisites
 
