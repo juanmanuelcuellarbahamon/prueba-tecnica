@@ -1,5 +1,3 @@
-# Project Name
-
 This repository contains a full-stack application built using **NestJS** for the backend and **Vue.js with Vite** for the frontend. The project is containerized using **Docker Compose**, and API documentation is provided via a **Postman Collection**.
 
 ## Table of Contents
@@ -9,9 +7,6 @@ This repository contains a full-stack application built using **NestJS** for the
 - [Installation](#installation)
   - [Backend](#backend)
   - [Frontend](#frontend)
-- [Running the Application](#running-the-application)
-  - [Using Docker Compose](#using-docker-compose)
-  - [Without Docker](#without-docker)
 - [Postman Collection](#postman-collection)
 - [Contributing](#contributing)
 - [License](#license)
