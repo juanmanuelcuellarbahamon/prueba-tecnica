@@ -32,7 +32,6 @@ The project is organized into the following directories:
 Before you begin, ensure you have the following installed on your machine:
 
 - [Node.js](https://nodejs.org/ ) (v20+ recommended)
-- [Yarn](https://yarnpkg.com/ ) or [npm](https://www.npmjs.com/ )
 - [Docker](https://www.docker.com/ ) and [Docker Compose](https://docs.docker.com/compose/ )
 - [Postman](https://www.postman.com/ ) (optional, for API testing)
 
