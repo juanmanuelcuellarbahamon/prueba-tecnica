@@ -2,10 +2,10 @@
   "type": "mysql",
   "url": "${process.env.DATABASE_URL}",
   "entities": ["dist/**/*.entity{.js,.ts}"],
-  "synchronize": "${process.env.DB_SYNCHRONIZE}",
-  "logging": "${process.env.DB_LOGGING}",
+  "synchronize": true,
+  "logging": false,
   "dropSchema": false,
-  "migrationsTableName": "migrations",
+  " migrationsTableName": "migrations",
   "migrations": ["src/migrations/*.ts"],
   "cli": {
     "migrationsDir": "src/migrations"
