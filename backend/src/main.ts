@@ -3,14 +3,18 @@ import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
-  dotenv.config({ path: envFile });
+  const envConfig = dotenv.config();
+
+  if (envConfig.error) {
+    console.error('Failed to load .env file:', envConfig.error.message);
+    process.exit(1);
+  }
 
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5080',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
@@ -19,4 +23,5 @@ async function bootstrap() {
 
   console.log(`Application is running on: http://localhost:${port}`);
 }
+
 bootstrap();

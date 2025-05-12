@@ -23,6 +23,7 @@
     "echarts": "^5.6.0",
     "js-base64": "^3.7.7",
     "material-design-icons-iconfont": "^6.7.0",
+    "sweetalert2": "^11.21.0",
     "vue": "^3.5.13",
     "vue-echarts": "^7.0.3",
     "vue-router": "^4.5.0"

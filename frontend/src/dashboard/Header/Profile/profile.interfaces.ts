@@ -1,3 +1,8 @@
+export interface UpdateUserDto {
+  avatar?: string | null;
+  password?: string;
+}
+
 export interface UserResponse {
   id: number;
   firstName: string;
@@ -9,5 +14,5 @@ export interface UserResponse {
   address: string;
   phoneNumber: string;
   isActive: boolean;
-  avatar?: string | null;
+  avatar: string | null;
 }

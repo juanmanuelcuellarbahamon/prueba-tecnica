@@ -10,6 +10,7 @@
           :key="index"
           :item="item"
           :isCollapsed="isCollapsed"
+          :userRole="userRole"
           @toggle-menu-item="toggleMenuItem"
         />
       </ul>
@@ -29,6 +30,7 @@
   import { defineComponent, reactive, ref, computed } from 'vue';
   import { sidebarMenu } from '../../router/sidebar-routes';
   import SidebarMenuItem from './SidebarMenuItem.vue';
+import { TokenService } from '../../auth/auth-jwt-service';
 
   export default defineComponent({
     name: 'Sidebar',
@@ -36,6 +38,8 @@
     setup() {
       const isCollapsed = ref(true);
       const isActive = ref(false);
+
+      const userRole = ref<string>(TokenService.getClaim("role"))
 
       const toggleSidebar = () => {
         isCollapsed.value = !isCollapsed.value;
@@ -62,6 +66,7 @@
         menuItems,
         toggleMenuItem,
         isSmallScreen,
+        userRole
       };
     },
   });

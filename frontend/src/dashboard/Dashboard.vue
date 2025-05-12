@@ -8,7 +8,7 @@
 
         <div v-if="$route.path === '/dashboard'" class="welcome-container">
           <div>
-            <img src="../assets/img/logo.png" alt="logo" />
+            <img src="../assets/img/bancolombia.png" alt="logo" />
           </div>
           <div>
             Bienvenido de nuevo

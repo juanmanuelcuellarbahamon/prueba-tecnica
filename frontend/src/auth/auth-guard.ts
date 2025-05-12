@@ -8,7 +8,7 @@ export const authGuard = (
   const isAuthenticated = !!localStorage.getItem("AUTH_TOKEN");
 
   if (to.name === 'auth' && isAuthenticated) {
-    return next({ name: 'dashboard' });
+    return next({ name: 'home' });
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {

@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar-register">
     <div class="navbar-image">
-      <img src="../assets/img/logo.png" alt="logo" />
+      <img src="../assets/img/bancolombia.png" alt="logo" />
     </div>
     <div class="navbar-login" @click="goToLogin">Inicia sesión</div>
   </nav>

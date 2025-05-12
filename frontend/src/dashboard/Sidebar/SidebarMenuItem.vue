@@ -1,5 +1,5 @@
 <template>
-  <li class="menu-item-container">
+  <li v-if="isVisible(item)" class="menu-item-container">
     <div v-if="item.routeName == 'chat'" class="circle-notifications">+99</div>
 
     <template v-if="isStandaloneItem(item)">
@@ -48,6 +48,7 @@
           :key="childIndex"
           :item="child"
           :isCollapsed="isCollapsed"
+          :userRole="userRole"
           @toggle-menu-item="$emit('toggle-menu-item', $event)"
         />
       </ul>
@@ -71,9 +72,13 @@
         type: Boolean,
         required: true,
       },
+      userRole: {
+        type: String,
+        required: true,
+      },
     },
     emits: ['toggle-menu-item'],
-    setup(_, { emit }) {
+    setup(props, { emit }) {
       const route = useRoute();
 
       const hasChildren = (item: MenuItem): boolean => {
@@ -119,6 +124,15 @@
         return !hasVisibleChildren(item);
       };
 
+      const isVisible = (item: MenuItem): boolean => {
+        if (!item.role || item.role.length === 0) return true;
+        if (item.role.includes(props.userRole)) return true;
+        if (item.children) {
+          return item.children.some((child) => isVisible(child));
+        }
+        return false;
+      };
+
       return {
         hasChildren,
         hasVisibleChildren,
@@ -126,6 +140,7 @@
         toggleMenuItem,
         isAnyChildActive,
         isStandaloneItem,
+        isVisible,
       };
     },
   });

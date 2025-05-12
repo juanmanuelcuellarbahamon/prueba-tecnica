@@ -2,8 +2,8 @@
   <div class="header-dashboard">
     <div style="display: flex; align-items: center">
       <img
-        src="../../assets/img/logo-white.png"
-        style="width: 160px"
+        src="../../assets/img/bancolombia.png"
+        style="width: 160px; filter: brightness(0) invert(1);"
         alt="logo-mini"
       />
     </div>
@@ -11,10 +11,18 @@
     <div>
       <CustomMenu width="250px">
         <template #trigger>
-          <div class="avatar">{{ initials }}</div>
+          <div class="avatar">
+            <span v-if="!avatarBase64">{{ initials }}</span>
+            <img v-if="avatarBase64" :src="avatarBase64" alt="avatar">
+          </div>
         </template>
 
         <template #content>
+
+          <h1 style="text-align: center; font-size: 15px; margin-bottom: 20px;">{{ fullname }}</h1>
+
+          <Button @click="openModalEditProfile" icon="person" :full-width="true">Perfil</Button>
+
           <Button icon="logout" @click="logoutSession" :full-width="true"
             >Cerrar Sesión</Button
           >
@@ -55,8 +63,11 @@
 
       const modalProfile = ref<boolean>(false);
       const isFexcomCrm = ref(false);
+      const showProfile = ref(false);
 
       const fullname = ref<string>(TokenService.getClaim('fullName'));
+
+       const avatarBase64 = ref<string | undefined>(localStorage.getItem('AVATAR_USER') || undefined);
 
       const initials = computed(() => {
         if (!fullname.value) return '';
@@ -98,7 +109,9 @@
         closeModal,
         isFexcomCrm,
         fullname,
-        initials
+        initials,
+        showProfile,
+        avatarBase64
       };
     },
   });

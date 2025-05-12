@@ -8,4 +8,6 @@ export class WithdrawService {
     const url = `/bank-accounts/withdraw/${userId}`;
     return await this.http.$post<ResponseDto, FundsWithdrawDto>(url, payload);
   }
+
+  
 }

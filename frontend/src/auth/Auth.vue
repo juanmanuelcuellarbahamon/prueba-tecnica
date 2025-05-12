@@ -2,7 +2,7 @@
   <div class="auth-bg">
     <form class="form-auth" @submit.prevent="handleSubmit">
       <div class="logo-container">
-        <img src="../assets/img/logo.png" alt="logo" />
+        <img src="../assets/img/bancolombia.png" alt="logo" />
       </div>
       <Input
         v-model="formData.email"
@@ -98,7 +98,7 @@
         try {
           await login(formData);
           showToast('Usuario ingresado correctamente', 'success')
-          router.push({ name: 'dashboard' });
+          router.push({ name: 'home' });
         } catch (error) {
           showToast('El usuario o contraseña no es correcto', 'error');
         } finally {

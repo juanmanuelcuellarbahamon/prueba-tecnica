@@ -142,7 +142,6 @@
 .menu-item.active .icon,
 .submenu-item.active .icon {
   color: #fff;
-  transform: rotate(15deg);
 }
 
 .menu-item.active .label,
