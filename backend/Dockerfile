@@ -21,6 +21,6 @@ COPY --from=builder /app/tsconfig.json ./
 
 ENV NODE_ENV=production
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["npm", "run", "start:prod"]
