@@ -7,7 +7,7 @@ services:
     ports:
       - "5080:5080"
     environment:
-      VITE_APP_API_BASE_URL: http://localhost:3000
+      VITE_APP_API_BASE_URL: http://backend:4000
     depends_on:
       - backend
 
@@ -21,6 +21,7 @@ services:
     environment:
       NODE_ENV: production
       JWT_SECRET: your_jwt_secret
+      JWT_EXPIRATION_TIME: 60m
       DATABASE_URL: mysql://root:admin@database:3306/prueba_db
     depends_on:
       - database
