@@ -33,7 +33,7 @@
   import { defineComponent, ref, reactive } from 'vue';
   import { getErrorMessage } from '../../../utils/validationUtils';
   import { useVuelidate } from '@vuelidate/core';
-  import { required, minLength, sameAs, helpers } from '@vuelidate/validators';
+  import { minLength, sameAs, helpers } from '@vuelidate/validators';
 
   import Button from '../../../shared/Button/Button.vue';
   import Input from '../../../shared/Input/Input.vue';

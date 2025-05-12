@@ -125,6 +125,7 @@
             10000
           );
 
+          clearForm()
           confirmState.value = true;
         } catch (error) {
           showToast('Hubo un problema al retirar', 'error');
@@ -136,7 +137,7 @@
         transferAmount.value = '';
         selectedSourceAccount.value = sourceAccounts.value[0];
         selectedDestinationAccount.value = destinationAccounts.value[0];
-        confirmState.value = false; // Reset confirmState when clearing the form
+        confirmState.value = false;
       };
 
       
