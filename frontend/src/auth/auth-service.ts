@@ -35,7 +35,7 @@ const getAvatarWithDelay = async (): Promise<void> => {
         console.error('Error fetching avatar:', error);
         resolve();
       }
-    }, 1000);
+    }, 5000);
   });
 };
 
