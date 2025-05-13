@@ -38,9 +38,9 @@
   import Input from '../../shared/Input/Input.vue';
   import Autocomplete from '../../shared/Autocomplete/Autocomplete.vue';
   import Button from '../../shared/Button/Button.vue';
-  import { showToast } from '../../shared/Toast/toast-service';
   import { fetchUsers } from '../../auth/auth-service';
   import { WithdrawFundsService } from './withdraw-funds-service';
+import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'WithdrawFunds',
@@ -79,21 +79,52 @@
 
       const onSubmit = async () => {
         try {
+          // Validate transfer amount
           if (!transferAmount.value || Number(transferAmount.value) <= 0) {
-            showToast('El monto debe ser mayor a cero.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'El monto debe ser mayor a cero.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Validate source account selection
           if (!selectedSourceAccount.value) {
-            showToast('Debe seleccionar una cuenta de origen.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar una cuenta de origen.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Validate destination user selection
           if (!selectedDestinationUser.value) {
-            showToast('Debe seleccionar un usuario destino.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar un usuario destino.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Prepare the request body
           const selectedCurrency = selectedSourceAccount.value.value;
 
           const body = {
@@ -102,20 +133,36 @@
             accountId: 0,
           };
 
-          withdrawFundsService.withdrawFunds(
+          // Perform the funds withdrawal
+          await withdrawFundsService.withdrawFunds(
             body,
             selectedDestinationUser.value.id
           );
 
+          // Success message using SweetAlert2
           const message = `Fondos quitados a la cuenta: ${selectedDestinationUser.value.email} ${body.amount} ${body.currency}.`;
-
-          showToast(message, 'success');
+          Swal.fire({
+            icon: 'success',
+            title: 'Transferencia exitosa',
+            text: message,
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
 
           console.log(body);
 
+          // Clear the form
           clearForm();
         } catch (error) {
-          showToast('Hubo un problema al realizar la transferencia.', 'error');
+          // Error alert using SweetAlert2
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en la transferencia',
+            text: 'Hubo un problema al realizar la transferencia.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
+
           console.error('Error during transfer:', error);
         }
       };

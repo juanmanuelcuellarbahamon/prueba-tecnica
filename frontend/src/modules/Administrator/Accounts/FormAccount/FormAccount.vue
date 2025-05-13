@@ -74,13 +74,7 @@
       :errorMessage="getErrorMessage(v$.formData.accountCategory)"
     />
 
-    <Button
-      type="submit"
-      :full-width="true"
-      icon="add"
-    >
-      Crear cuenta
-    </Button>
+    <Button type="submit" :full-width="true" icon="add"> Crear cuenta </Button>
   </form>
 </template>
 
@@ -94,19 +88,18 @@
   import Input from '../../../../shared/Input/Input.vue';
   import Autocomplete from '../../../../shared/Autocomplete/Autocomplete.vue';
   import Button from '../../../../shared/Button/Button.vue';
-  import { showToast } from '../../../../shared/Toast/toast-service';
-  import { BankAccountService } from '../accounts-service'
+  import { BankAccountService } from '../accounts-service';
+import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'FormBankAccount',
     components: {
       Input,
       Autocomplete,
-      Button
+      Button,
     },
     emits: ['account-added'],
     setup(_, { emit }) {
-
       const bankAccountService = new BankAccountService();
 
       const formData = reactive({
@@ -118,7 +111,7 @@
         country: '',
         currency: '',
         accountCategory: '',
-        userId: TokenService.getClaim('sub')
+        userId: TokenService.getClaim('sub'),
       });
 
       const accountTypeOptions = ref(['Personal', 'Negocio']);
@@ -196,11 +189,23 @@
           isSubmitting.value = true;
           try {
             console.log('Form Data:', formData);
-            bankAccountService.createBankAccount(formData)
+            await bankAccountService.createBankAccount(formData);
             emit('account-added');
-            showToast('Cuenta agregada correctamente', 'success')
+
+            Swal.fire({
+              icon: 'success',
+              title: 'Cuenta agregada correctamente',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+            });
           } catch (error) {
-            showToast('Hubo un error al crear la cuenta', 'error')
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al crear la cuenta',
+              text: 'Hubo un error al crear la cuenta.',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+            });
           } finally {
             isSubmitting.value = false;
           }

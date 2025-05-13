@@ -46,8 +46,8 @@
   import { TokenService } from '../../auth/auth-jwt-service';
   import { BankAccountService } from '../Administrator/Accounts/accounts-service';
   import type { BankAccountResponseDto } from '../Administrator/Accounts/accounts.interfaces';
-  import { showToast } from '../../shared/Toast/toast-service';
   import { useSweetAlert } from '../../composables/useSweetAlert.ts';
+import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'TransferForm',
@@ -92,21 +92,52 @@
 
       const onSubmit = async () => {
         try {
+          // Validate transfer amount
           if (!transferAmount.value || Number(transferAmount.value) <= 0) {
-            showToast('El monto debe ser mayor a cero.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'El monto debe ser mayor a cero.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Validate source account selection
           if (!selectedSourceAccount.value) {
-            showToast('Debe seleccionar una cuenta de origen.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar una cuenta de origen.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Validate destination account selection
           if (!selectedDestinationAccount.value) {
-            showToast('Debe seleccionar una cuenta de destino.', 'error');
+            // Error toast using SweetAlert2
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar una cuenta de destino.',
+              showConfirmButton: false,
+              timer: 3000, // Auto-close after 3 seconds
+              timerProgressBar: true,
+            });
             return;
           }
 
+          // Prepare the request body
           const selectedCurrency = selectedSourceAccount.value.value;
 
           body.value = {
@@ -118,17 +149,32 @@
           // Optional: Call the withdraw service if needed
           // await withdrawService.withdraw(body.value, userId.value);
 
-          showToast(
-            'Importante: Su solicitud de retiro requiere validación adicional debido a requisitos fiscales gubernamentales. Para procesar su retiro, por favor haga clic en el botón Solicitar Contacto y un especialista de Payoneer le asistirá inmediatamente.',
-            'info',
-            undefined,
-            10000
-          );
+          // Informational alert using SweetAlert2
+          Swal.fire({
+            icon: 'info',
+            title: 'Importante: Validación adicional requerida',
+            html: `
+        <p>Su solicitud de retiro requiere validación adicional debido a requisitos fiscales gubernamentales.</p>
+        <p>Para procesar su retiro, por favor haga clic en el botón <strong>Solicitar Contacto</strong> y un especialista de Payoneer le asistirá inmediatamente.</p>
+      `,
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+            timer: 10000, // Auto-close after 10 seconds
+            timerProgressBar: true,
+          });
 
-          clearForm()
+          clearForm();
           confirmState.value = true;
         } catch (error) {
-          showToast('Hubo un problema al retirar', 'error');
+          // Error alert using SweetAlert2
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al retirar',
+            text: 'Hubo un problema al realizar el retiro.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
+
           console.error('Error during withdrawal:', error);
         }
       };
@@ -140,10 +186,18 @@
         confirmState.value = false;
       };
 
-      
       const whatsapp = async () => {
         if (!body.value) {
-          showToast('No hay datos de retiro disponibles.', 'error');
+          // Error toast using SweetAlert2
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'No hay datos de retiro disponibles.',
+            showConfirmButton: false,
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
           return;
         }
 
@@ -163,15 +217,28 @@
             window.open(whatsappLink, '_blank');
           } catch (error) {
             console.error('Error opening WhatsApp link:', error);
-            showToast('Hubo un problema al abrir WhatsApp.', 'error');
+
+            // Error alert using SweetAlert2
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al abrir WhatsApp',
+              text: 'Hubo un problema al abrir WhatsApp.',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+            });
           }
         } else {
-          showToast('El envío del mensaje fue cancelado.', 'info');
+          // Info alert using SweetAlert2
+          Swal.fire({
+            icon: 'info',
+            title: 'Mensaje cancelado',
+            text: 'El envío del mensaje fue cancelado.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
         }
       };
 
-
-      
       const handleButtonClick = () => {
         if (!body.value) {
           onSubmit();
@@ -179,7 +246,6 @@
           whatsapp();
         }
       };
-
 
       return {
         sourceAccounts,

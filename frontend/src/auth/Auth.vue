@@ -46,7 +46,7 @@
   import { useRouter } from 'vue-router';
   import Button from '../shared/Button/Button.vue';
   import Input from '../shared/Input/Input.vue';
-  import { showToast } from '../shared/Toast/toast-service';
+  import Swal from 'sweetalert2';
 
   export default defineComponent({
     components: {
@@ -94,10 +94,26 @@
 
         try {
           await login(formData);
-          showToast('Usuario ingresado correctamente', 'success');
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Usuario ingresado correctamente',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
           router.push({ name: 'home' });
         } catch (error) {
-          showToast('El usuario o contraseña no es correcto', 'error');
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'El usuario o contraseña no es correcto',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
         } finally {
           isLoading.value = false;
         }

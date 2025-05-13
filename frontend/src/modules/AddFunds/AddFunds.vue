@@ -38,9 +38,9 @@
   import Input from '../../shared/Input/Input.vue';
   import Autocomplete from '../../shared/Autocomplete/Autocomplete.vue';
   import Button from '../../shared/Button/Button.vue';
-  import { showToast } from '../../shared/Toast/toast-service';
-  import { fetchUsers } from "../../auth/auth-service";
-import { AddFundsService } from './add-funds-service';
+  import { fetchUsers } from '../../auth/auth-service';
+  import { AddFundsService } from './add-funds-service';
+import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'AddFunds',
@@ -51,7 +51,7 @@ import { AddFundsService } from './add-funds-service';
     },
     setup() {
       const transferAmount = ref<string>('');
-      const users = ref<any[]>([]); 
+      const users = ref<any[]>([]);
       const selectedSourceAccount = ref<any>(null);
       const selectedDestinationUser = ref<any>(null);
 
@@ -80,17 +80,41 @@ import { AddFundsService } from './add-funds-service';
       const onSubmit = async () => {
         try {
           if (!transferAmount.value || Number(transferAmount.value) <= 0) {
-            showToast('El monto debe ser mayor a cero.', 'error');
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'El monto debe ser mayor a cero.',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            });
             return;
           }
 
           if (!selectedSourceAccount.value) {
-            showToast('Debe seleccionar una cuenta de origen.', 'error');
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar una cuenta de origen.',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            });
             return;
           }
 
           if (!selectedDestinationUser.value) {
-            showToast('Debe seleccionar un usuario destino.', 'error');
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'Debe seleccionar un usuario destino.',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            });
             return;
           }
 
@@ -101,17 +125,29 @@ import { AddFundsService } from './add-funds-service';
             currency: selectedCurrency,
           };
 
-          addFundsService.addFunds(body, selectedDestinationUser.value.id)
+          await addFundsService.addFunds(
+            body,
+            selectedDestinationUser.value.id
+          );
 
           const message = `Fondos transferidos a la cuenta: ${selectedDestinationUser.value.email} ${body.amount} ${body.currency}.`;
-
-          showToast(message, 'success');
-
-          console.log(body);
-
+          Swal.fire({
+            icon: 'success',
+            title: 'Transferencia exitosa',
+            text: message,
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
           clearForm();
         } catch (error) {
-          showToast('Hubo un problema al realizar la transferencia.', 'error');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en la transferencia',
+            text: 'Hubo un problema al realizar la transferencia.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
+
           console.error('Error during transfer:', error);
         }
       };

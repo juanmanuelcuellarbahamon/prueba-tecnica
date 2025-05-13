@@ -38,10 +38,10 @@
 
 <script lang="ts">
   import { defineComponent, ref, watch, nextTick } from 'vue';
-  import { showToast } from '../Toast/toast-service.ts';
   import Cropper from 'cropperjs';
   import Modal from '../Modal/Modal.vue';
   import Button from '../Button/Button.vue';
+  import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'CircleAvatarBase64',
@@ -75,32 +75,70 @@
 
         if (!file) return;
 
+        // Check file size
         if (file.size > MAX_FILE_SIZE) {
-          showToast('La imagen no puede pesar más de 5MB.', 'error');
+          // Error toast using SweetAlert2
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'La imagen no puede pesar más de 5MB.',
+            showConfirmButton: false,
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
           if (fileInput.value) fileInput.value.value = '';
           return;
         }
 
+        // Check file type
         if (!file.type.startsWith('image/')) {
-          showToast('Por favor selecciona una imagen', 'error');
+          // Error toast using SweetAlert2
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Por favor selecciona una imagen',
+            showConfirmButton: false,
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
           if (fileInput.value) fileInput.value.value = '';
           return;
         }
 
+        // Read the file
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
           if (e.target?.result) {
             cropperImageSrc.value = e.target.result as string;
             showCropper.value = true;
           } else {
-            showToast('Hubo un error al leer el archivo', 'error');
+            // Error alert using SweetAlert2
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al leer el archivo',
+              text: 'Hubo un error al leer el archivo.',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+            });
           }
         };
+
         reader.onerror = () => {
-          showToast('Hubo un error al leer el archivo', 'error');
+          // Error alert using SweetAlert2
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al leer el archivo',
+            text: 'Hubo un error al leer el archivo.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
         };
+
         reader.readAsDataURL(file);
 
+        // Clear the file input
         if (fileInput.value) fileInput.value.value = '';
       };
 
@@ -113,7 +151,14 @@
             emit('image-uploaded', imageBase64.value);
             closeCropper();
           } else {
-            showToast('Hubo un error al recortar la imagen', 'error');
+            // Error alert using SweetAlert2
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al recortar la imagen',
+              text: 'Hubo un error al recortar la imagen.',
+              showConfirmButton: true,
+              confirmButtonText: 'Aceptar',
+            });
           }
         }
       };

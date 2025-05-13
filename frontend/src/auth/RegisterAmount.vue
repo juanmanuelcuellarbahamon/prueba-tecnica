@@ -50,7 +50,7 @@
 
   import Button from '../shared/Button/Button.vue';
   import { signUp } from './auth-service';
-  import { showToast } from '../shared/Toast/toast-service';
+  import Swal from 'sweetalert2';
 
   export default defineComponent({
     components: {
@@ -76,17 +76,32 @@
       const confirmSelection = async () => {
         if (selectedAmount.value) {
           const formData = localStorage.getItem('USER_FORM');
-          console.log(typeof formData, formData);
 
           try {
             if (formData !== null) {
               const json = JSON.parse(formData);
               await signUp(json);
-              showToast('Usuario registrado', 'success');
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Usuario registrado',
+                showConfirmButton: false,
+                timer: 3000, // Auto-close after 3 seconds
+                timerProgressBar: true,
+              });
               router.push({ name: 'auth' });
             }
           } catch (error) {
-            showToast("El correo ya existe", 'error')
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              title: 'El correo ya existe',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            });
             console.error(error);
           }
         }

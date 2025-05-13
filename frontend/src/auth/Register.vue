@@ -126,179 +126,191 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, type Ref } from 'vue';
-import { useVuelidate } from '@vuelidate/core';
-import {
-  required,
-  minLength,
-  helpers,
-  email,
-} from '@vuelidate/validators';
-import { getErrorMessage } from '../utils/validationUtils';
-import { useRouter } from 'vue-router';
-import Button from '../shared/Button/Button.vue';
-import Input from '../shared/Input/Input.vue';
-import Autocomplete from '../shared/Autocomplete/Autocomplete.vue';
-import { showToast } from '../shared/Toast/toast-service';
-import { fetchCountryPrefixes } from './auth-service';
-import type { CountryPrefix } from './auth.interfaces';
+  import { defineComponent, onMounted, reactive, ref, type Ref } from 'vue';
+  import { useVuelidate } from '@vuelidate/core';
+  import { required, minLength, helpers, email } from '@vuelidate/validators';
+  import { getErrorMessage } from '../utils/validationUtils';
+  import { useRouter } from 'vue-router';
+  import Button from '../shared/Button/Button.vue';
+  import Input from '../shared/Input/Input.vue';
+  import Autocomplete from '../shared/Autocomplete/Autocomplete.vue';
+  import { fetchCountryPrefixes } from './auth-service';
+  import type { CountryPrefix } from './auth.interfaces';
+  import Swal from 'sweetalert2';
 
-export default defineComponent({
-  components: {
-    Button,
-    Input,
-    Autocomplete,
-  },
-  setup() {
-    const router = useRouter();
-    const formData = reactive({
-      firstName: '',
-      lastName: '',
-      identification: '',
-      email: '',
-      password: '',
-      country: '',
-      state: '',
-      address: '',
-      phoneNumber: '',
-    });
+  export default defineComponent({
+    components: {
+      Button,
+      Input,
+      Autocomplete,
+    },
+    setup() {
+      const router = useRouter();
+      const formData = reactive({
+        firstName: '',
+        lastName: '',
+        identification: '',
+        email: '',
+        password: '',
+        country: '',
+        state: '',
+        address: '',
+        phoneNumber: '',
+      });
 
-    const selectedPrefix = ref<CountryPrefix | {}>({});
-    const prefixSuggestions: Ref<CountryPrefix[]> = ref([]);
+      const selectedPrefix = ref<CountryPrefix | {}>({});
+      const prefixSuggestions: Ref<CountryPrefix[]> = ref([]);
 
-    onMounted(() => {
-      localStorage.removeItem("USER_FORM")
-    })
+      onMounted(() => {
+        localStorage.removeItem('USER_FORM');
+      });
 
-    onMounted(async () => {
-      try {
-        const prefixes = await fetchCountryPrefixes();
-        prefixSuggestions.value = prefixes;
-      } catch (err) {
-        console.error(err);
-      }
-    });
+      onMounted(async () => {
+        try {
+          const prefixes = await fetchCountryPrefixes();
+          prefixSuggestions.value = prefixes;
+        } catch (err) {
+          console.error(err);
+        }
+      });
 
-    const isLoading = ref(false);
+      const isLoading = ref(false);
 
-    const goToLogin = () => {
-      router.push({ name: 'auth' });
-    };
+      const goToLogin = () => {
+        router.push({ name: 'auth' });
+      };
 
-    const isValidPhoneNumberWithPrefix = helpers.withMessage(
-      'El número de teléfono es requerido y debe tener un prefijo seleccionado',
-      (_) => {
-        return (
-          selectedPrefix.value && Object.keys(selectedPrefix.value).length > 0
-        );
-      }
-    );
+      const isValidPhoneNumberWithPrefix = helpers.withMessage(
+        'El número de teléfono es requerido y debe tener un prefijo seleccionado',
+        (_) => {
+          return (
+            selectedPrefix.value && Object.keys(selectedPrefix.value).length > 0
+          );
+        }
+      );
 
-    const isNumericOnly = helpers.withMessage(
-      'El número de teléfono solo puede contener números',
-      (value: string) => {
-        return /^\d+$/.test(value);
-      }
-    );
+      const isNumericOnly = helpers.withMessage(
+        'El número de teléfono solo puede contener números',
+        (value: string) => {
+          return /^\d+$/.test(value);
+        }
+      );
 
-    const rules = {
-      formData: {
-        firstName: {
-          required: helpers.withMessage('El nombre es requerido', required),
-          minLength: helpers.withMessage(
-            'El nombre debe tener al menos 3 caracteres',
-            minLength(3)
-          ),
+      const rules = {
+        formData: {
+          firstName: {
+            required: helpers.withMessage('El nombre es requerido', required),
+            minLength: helpers.withMessage(
+              'El nombre debe tener al menos 3 caracteres',
+              minLength(3)
+            ),
+          },
+          lastName: {
+            required: helpers.withMessage(
+              'Los apellidos son requeridos',
+              required
+            ),
+            minLength: helpers.withMessage(
+              'Los apellidos deben tener al menos 3 caracteres',
+              minLength(3)
+            ),
+          },
+          identification: {
+            required: helpers.withMessage(
+              'La identificación es requerida',
+              required
+            ),
+          },
+          email: {
+            required: helpers.withMessage(
+              'El correo electrónico es requerido',
+              required
+            ),
+            email: helpers.withMessage(
+              'Por favor ingrese un correo electrónico válido',
+              email
+            ),
+          },
+          password: {
+            required: helpers.withMessage(
+              'La contraseña es requerida',
+              required
+            ),
+            minLength: helpers.withMessage(
+              'La contraseña debe tener al menos 6 caracteres',
+              minLength(6)
+            ),
+          },
+          country: {
+            required: helpers.withMessage('El país es requerido', required),
+          },
+          state: {
+            required: helpers.withMessage('El estado es requerido', required),
+          },
+          address: {
+            required: helpers.withMessage(
+              'La dirección es requerida',
+              required
+            ),
+          },
+          phoneNumber: {
+            required: helpers.withMessage(
+              'El número de teléfono es requerido',
+              required
+            ),
+            isValidPhoneNumberWithPrefix,
+            isNumericOnly,
+          },
         },
-        lastName: {
-          required: helpers.withMessage(
-            'Los apellidos son requeridos',
-            required
-          ),
-          minLength: helpers.withMessage(
-            'Los apellidos deben tener al menos 3 caracteres',
-            minLength(3)
-          ),
-        },
-        identification: {
-          required: helpers.withMessage(
-            'La identificación es requerida',
-            required
-          ),
-        },
-        email: {
-          required: helpers.withMessage(
-            'El correo electrónico es requerido',
-            required
-          ),
-          email: helpers.withMessage(
-            'Por favor ingrese un correo electrónico válido',
-            email
-          ),
-        },
-        password: {
-          required: helpers.withMessage(
-            'La contraseña es requerida',
-            required
-          ),
-          minLength: helpers.withMessage(
-            'La contraseña debe tener al menos 6 caracteres',
-            minLength(6)
-          ),
-        },
-        country: {
-          required: helpers.withMessage('El país es requerido', required),
-        },
-        state: {
-          required: helpers.withMessage('El estado es requerido', required),
-        },
-        address: {
-          required: helpers.withMessage(
-            'La dirección es requerida',
-            required
-          ),
-        },
-        phoneNumber: {
-          required: helpers.withMessage(
-            'El número de teléfono es requerido',
-            required
-          ),
-          isValidPhoneNumberWithPrefix,
-          isNumericOnly
-        },
-      },
-    };
+      };
 
-    const v$ = useVuelidate(rules, { formData });
+      const v$ = useVuelidate(rules, { formData });
 
-    const handleSubmit = async () => {
-      const isValid = await v$.value.$validate();
-      if (!isValid) return;
+      const handleSubmit = async () => {
+        const isValid = await v$.value.$validate();
+        if (!isValid) return;
 
-      isLoading.value = true;
+        isLoading.value = true;
 
-      try {
-        localStorage.setItem("USER_FORM", JSON.stringify(formData))
-        router.push({ name: 'register-payment' });
-      } catch (error) {
-        showToast('Error al registrar el usuario', 'error');
-      } finally {
-        isLoading.value = false;
-      }
-    };
+        try {
+          localStorage.setItem('USER_FORM', JSON.stringify(formData));
+          router.push({ name: 'register-payment' });
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Usuario registrado correctamente',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+          });
+        } catch (error) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            title: 'Error al registrar el usuario',
+            showConfirmButton: false,
+            timer: 3000, // Auto-close after 3 seconds
+            timerProgressBar: true,
+          });
+        } finally {
+          isLoading.value = false;
+        }
+      };
 
-    return {
-      formData,
-      v$,
-      handleSubmit,
-      getErrorMessage,
-      isLoading,
-      goToLogin,
-      selectedPrefix,
-      prefixSuggestions,
-    };
-  },
-});
+      return {
+        formData,
+        v$,
+        handleSubmit,
+        getErrorMessage,
+        isLoading,
+        goToLogin,
+        selectedPrefix,
+        prefixSuggestions,
+      };
+    },
+  });
 </script>
 
 <style scoped>

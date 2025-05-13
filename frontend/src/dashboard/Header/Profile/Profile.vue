@@ -41,7 +41,7 @@
 
   import { TokenService } from '../../../auth/auth-jwt-service';
   import { ProfileService } from './profile-service';
-import { showToast } from '../../../shared/Toast/toast-service';
+import Swal from 'sweetalert2';
 
   export default defineComponent({
     name: 'Profile',
@@ -82,7 +82,6 @@ import { showToast } from '../../../shared/Toast/toast-service';
       };
 
       const handleSubmit = async () => {
-        // Trigger validation only for touched fields
         v$.value.$touch();
 
         const isValid = await v$.value.$validate();
@@ -93,16 +92,22 @@ import { showToast } from '../../../shared/Toast/toast-service';
         try {
           const payload: { avatar?: string | null; password?: string } = {};
 
-          // Check if an avatar was uploaded
           if (base64Image.value) {
             payload.avatar = base64Image.value;
           }
 
-          // Check if a new password was provided and confirmed
           if (formData.newPassword || formData.confirmNewPassword) {
             if (formData.newPassword !== formData.confirmNewPassword) {
-              showToast('Las contraseñas no coinciden', 'error');
-              return; // Stop further execution if passwords don't match
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Las contraseñas no coinciden',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+              });
+              return;
             }
             payload.password = formData.newPassword;
           }
@@ -111,13 +116,25 @@ import { showToast } from '../../../shared/Toast/toast-service';
           const updatedUser = await profileService.updateUser(userId, payload);
 
           console.log('Updated User:', updatedUser);
-          alert('Perfil actualizado con éxito');
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Perfil actualizado con éxito',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
+
           resetFormData();
         } catch (error) {
           console.error('Error al actualizar el perfil:', error);
-          alert(
-            'Ocurrió un error al actualizar el perfil. Por favor, intenta de nuevo.'
-          );
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Ocurrió un error al actualizar el perfil',
+            text: 'Por favor, intenta de nuevo.',
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+          });
         } finally {
           isLoading.value = false;
         }
