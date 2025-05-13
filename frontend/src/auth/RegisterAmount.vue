@@ -50,7 +50,7 @@
 
   import Button from '../shared/Button/Button.vue';
   import { signUp } from './auth-service';
-  import { showToast } from '../shared/Toast/toast-service';
+  // import { showToast } from '../shared/Toast/toast-service';
 
   export default defineComponent({
     components: {
