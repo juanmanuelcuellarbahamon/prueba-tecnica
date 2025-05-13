@@ -63,6 +63,10 @@ export function showToast(
   const finalIcon = icon || defaultIcons[type];
   createToastContainer();
 
+  // Create a ref to track the Toast component instance
+  let toastComponent: InstanceType<typeof Toast> | undefined;
+
+  // Create and mount the Toast instance
   const toastInstance = createApp(Toast, {
     message,
     type,
@@ -72,33 +76,38 @@ export function showToast(
 
   const toastElement = document.createElement('div');
   toastInstance.mount(toastElement);
-  toastContainer?.appendChild(toastElement);
 
-  const toastComponent = toastInstance._instance?.proxy as InstanceType<
-    typeof Toast
-  >;
-
-  if (!toastComponent) {
-    console.error('Toast component is not properly initialized.');
-    return;
-  }
-
-  nextTick(() => {
-    if (toastComponent && typeof toastComponent.show === 'function') {
-      toastComponent.show();
-    } else {
-      console.error('Toast component does not have a show method.');
-    }
+  // Use a ref to track the component instance
+  toastInstance.provide('$toastRef', {
+    setComponent: (component: InstanceType<typeof Toast>) => {
+      toastComponent = component;
+    },
   });
 
-  setTimeout(() => {
-    toastInstance.unmount();
-    toastElement.remove();
+  // Append the toast element to the container
+  toastContainer?.appendChild(toastElement);
 
-    if (toastComponent && typeof toastComponent.hide === 'function') {
-      toastComponent.hide();
+  // Wait for the component to mount and access its instance
+  nextTick().then(() => {
+    if (!toastComponent) {
+      console.error('Toast component is not properly initialized.');
+      return;
     }
 
-    removeToastContainerIfEmpty();
-  }, duration + 100);
+    // Call the show method
+    toastComponent.show();
+
+    // Schedule the hide and cleanup
+    setTimeout(() => {
+      if (toastComponent && typeof toastComponent.hide === 'function') {
+        toastComponent.hide();
+      }
+
+      // Unmount and remove the toast element
+      toastInstance.unmount();
+      toastElement.remove();
+
+      removeToastContainerIfEmpty();
+    }, duration + 100);
+  });
 }
