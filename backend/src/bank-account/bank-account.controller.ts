@@ -7,7 +7,7 @@ import { FundsDto } from './dto/funds.dto';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { FundsWithdrawDto } from './dto/funds-withdraw.dto';
 
-@Controller('bank-accounts')
+@Controller('/api/bank-accounts')
 export class BankAccountController {
   constructor(private readonly bankAccountService: BankAccountService) {}
 
