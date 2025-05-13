@@ -35,10 +35,8 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
       payload
     );
 
-    // Set the token in the TokenService
     TokenService.setToken(response.accessToken);
 
-    // Fetch the avatar without introducing artificial delays
     try {
       await getAvatar();
     } catch (avatarError) {
