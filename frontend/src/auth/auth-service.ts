@@ -6,7 +6,7 @@ export const removeToken = (): void => {
   TokenService.removeToken();
 };
 
-export const getAvatar = async (): Promise<{ avatar: string | null }> => {
+export const getAvatar = async () => {
   const { $get } = useHttp();
   const userId: number = TokenService.getClaim("sub");
 
@@ -20,7 +20,6 @@ export const getAvatar = async (): Promise<{ avatar: string | null }> => {
       localStorage.setItem("AVATAR_USER", response.avatar);
     }
 
-    return response;
   } catch (error) {
     console.error('Error fetching avatar:', error);
     throw new Error('Error fetching avatar');
