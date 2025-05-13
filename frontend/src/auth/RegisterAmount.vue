@@ -50,7 +50,7 @@
 
   import Button from '../shared/Button/Button.vue';
   import { signUp } from './auth-service';
-  // import { showToast } from '../shared/Toast/toast-service';
+  import { showToast } from '../shared/Toast/toast-service';
 
   export default defineComponent({
     components: {
@@ -82,10 +82,11 @@
             if (formData !== null) {
               const json = JSON.parse(formData);
               await signUp(json);
-              // showToast('Usuario registrado', 'success');
+              showToast('Usuario registrado', 'success');
               router.push({ name: 'auth' });
             }
           } catch (error) {
+            showToast("El correo ya existe", 'error')
             console.error(error);
           }
         }
