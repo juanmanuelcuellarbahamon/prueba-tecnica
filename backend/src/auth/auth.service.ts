@@ -153,16 +153,16 @@ export class AuthService {
     return userResponse;
   }
 
-  async getAvatarById(userId: number): Promise<string | null> {
+  async getAvatarById(userId: number): Promise<{ avatar: string | null }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['avatar'],
     });
 
     if (!user) {
-      throw new Error('User not found');
+      return { avatar: null };
     }
 
-    return user.avatar;
+    return { avatar: user.avatar || null };
   }
 }

@@ -6,24 +6,26 @@ export const removeToken = (): void => {
   TokenService.removeToken();
 };
 
-export const getAvatar = async () => {
+export const getAvatar = async (): Promise<{ avatar: string | null }> => {
   const { $get } = useHttp();
-
-  const userId: number = TokenService.getClaim("sub")
+  const userId: number = TokenService.getClaim("sub");
 
   try {
-    const response = await $get<any[]>(`/auth/avatar/${userId}`);
+    const response = await $get<{ avatar: string | null }>(
+      `/auth/avatar/${userId}`
+    );
 
-    if (response != null) {
-      localStorage.setItem("AVATAR_USER", response.toString())
+    // Store the avatar in local storage if it exists
+    if (response.avatar) {
+      localStorage.setItem("AVATAR_USER", response.avatar);
     }
 
     return response;
   } catch (error) {
-    console.error('Error buscando avatar', error);
-    throw new Error('Error buscando avatar');
+    console.error('Error fetching avatar:', error);
+    throw new Error('Error fetching avatar');
   }
-}
+};
 
 const getAvatarWithDelay = async (): Promise<void> => {
   return new Promise<void>((resolve) => {
@@ -35,7 +37,7 @@ const getAvatarWithDelay = async (): Promise<void> => {
         console.error('Error fetching avatar:', error);
         resolve();
       }
-    }, 5000);
+    }, 1000);
   });
 };
 

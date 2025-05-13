@@ -51,7 +51,9 @@ export class AuthController {
 
   @Get('avatar/:id')
   @UseGuards(AuthGuard('jwt'))
-  async getAvatarById(@Param('id') userId: number): Promise<string | null> {
+  async getAvatarById(
+    @Param('id') userId: number,
+  ): Promise<{ avatar: string | null }> {
     return this.authService.getAvatarById(userId);
   }
 }
