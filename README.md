@@ -77,3 +77,31 @@ Navigate to the `root` directory:
 #### Admin
 
 ![](./readme-dashboard-admin.png)
+
+### Menu
+
+#### Retirar y convertir
+
+![](./readme-dashboard-retirar-convertir.png)
+![](./readme-dashboard-retirar-convertir-2.png)
+
+#### Administrar
+
+![](./readme-dashboard-administrar.png)
+
+##### Transacciones
+
+![](./readme-dashboard-administrar-transaccion.png)
+
+##### Cuentas bancarias
+
+![](./readme-dashboard-administrar-cuentas.png)
+![](./readme-dashboard-administrar-cuentas-crear.png)
+
+#### Agregar fondos a un usuario (SOLO ADMINS)
+
+![](./readme-dashboard-add-funds.png)
+
+#### Retirar fondos a un usuario (SOLO ADMINS)
+
+![](./readme-dashboard-remove-funds.png)
