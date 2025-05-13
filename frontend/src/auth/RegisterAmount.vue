@@ -82,7 +82,7 @@
             if (formData !== null) {
               const json = JSON.parse(formData);
               await signUp(json);
-              showToast('Usuario registrado', 'success');
+              // showToast('Usuario registrado', 'success');
               router.push({ name: 'auth' });
             }
           } catch (error) {
