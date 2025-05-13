@@ -53,3 +53,27 @@ Navigate to the `root` directory:
 ### Login
 
 ![](./login-readme.png)
+
+### Registro
+
+#### Formulario
+
+![](./register-readme-1.png)
+
+#### Pago
+
+![](./register-readme-2.png)
+
+#### Monto
+
+![](./register-readme-3.png)
+
+### Dashboard
+
+#### Usuario
+
+![](./readme-dashboard-user.png)
+
+#### Admin
+
+![](./readme-dashboard-admin.png)
