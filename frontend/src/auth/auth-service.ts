@@ -27,14 +27,6 @@ export const getAvatar = async (): Promise<{ avatar: string | null }> => {
   }
 };
 
-const getAvatarWithDelay = async (): Promise<void> => {
-  try {
-    await getAvatar();
-  } catch (error) {
-    console.error('Error fetching avatar:', error);
-  }
-};
-
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   const { $post } = useHttp();
 
