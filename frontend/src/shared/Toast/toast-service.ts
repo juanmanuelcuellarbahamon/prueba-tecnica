@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 import Toast from './Toast.vue';
 
 let toastContainer: HTMLElement | null = null;
@@ -77,12 +77,28 @@ export function showToast(
   const toastComponent = toastInstance._instance?.proxy as InstanceType<
     typeof Toast
   >;
-  toastComponent.show();
+
+  if (!toastComponent) {
+    console.error('Toast component is not properly initialized.');
+    return;
+  }
+
+  nextTick(() => {
+    if (toastComponent && typeof toastComponent.show === 'function') {
+      toastComponent.show();
+    } else {
+      console.error('Toast component does not have a show method.');
+    }
+  });
 
   setTimeout(() => {
     toastInstance.unmount();
     toastElement.remove();
-    toastComponent.hide();
+
+    if (toastComponent && typeof toastComponent.hide === 'function') {
+      toastComponent.hide();
+    }
+
     removeToastContainerIfEmpty();
   }, duration + 100);
 }
