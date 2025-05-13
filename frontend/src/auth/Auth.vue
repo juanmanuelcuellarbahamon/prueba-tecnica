@@ -68,10 +68,7 @@
       const rules = {
         formData: {
           email: {
-            required: helpers.withMessage(
-              'El correo es requerido',
-              required
-            ),
+            required: helpers.withMessage('El correo es requerido', required),
             email: helpers.withMessage('El correo no es válido', email),
           },
           password: {
@@ -97,8 +94,8 @@
 
         try {
           await login(formData);
-          showToast('Usuario ingresado correctamente', 'success')
-          router.push({ name: 'home' });
+          showToast('Usuario ingresado correctamente', 'success');
+          router.push({ name: 'home' }); // Navigate after successful login
         } catch (error) {
           showToast('El usuario o contraseña no es correcto', 'error');
         } finally {
@@ -107,8 +104,8 @@
       };
 
       onMounted(() => {
-        localStorage.removeItem("USER_FORM")
-      })
+        localStorage.removeItem('USER_FORM');
+      });
 
       return {
         formData,

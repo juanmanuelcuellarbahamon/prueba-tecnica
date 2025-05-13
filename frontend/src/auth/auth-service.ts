@@ -28,17 +28,11 @@ export const getAvatar = async (): Promise<{ avatar: string | null }> => {
 };
 
 const getAvatarWithDelay = async (): Promise<void> => {
-  return new Promise<void>((resolve) => {
-    setTimeout(async () => {
-      try {
-        await getAvatar();
-        resolve();
-      } catch (error) {
-        console.error('Error fetching avatar:', error);
-        resolve();
-      }
-    }, 1000);
-  });
+  try {
+    await getAvatar();
+  } catch (error) {
+    console.error('Error fetching avatar:', error);
+  }
 };
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
@@ -53,8 +47,12 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
     // Set the token in the TokenService
     TokenService.setToken(response.accessToken);
 
-    // Call getAvatar with a delay of 1000ms
-    await getAvatarWithDelay();
+    // Fetch the avatar without introducing artificial delays
+    try {
+      await getAvatar();
+    } catch (avatarError) {
+      console.warn('Failed to fetch avatar, but proceeding with login.');
+    }
 
     return response;
   } catch (error) {
