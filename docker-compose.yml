@@ -22,7 +22,7 @@ services:
       NODE_ENV: production
       JWT_SECRET: your_jwt_secret
       JWT_EXPIRATION_TIME: 60m
-      DATABASE_URL: mysql://root:admin@database:3307/prueba_db
+      DATABASE_URL: mysql://root:admin@database:3306/prueba_db
     depends_on:
       - database
 
