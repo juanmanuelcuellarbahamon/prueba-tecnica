@@ -85,6 +85,8 @@ Navigate to the `root` directory:
 ![](./readme-dashboard-retirar-convertir.png)
 ![](./readme-dashboard-retirar-convertir-2.png)
 
+![](./readme-whatsapp.png)
+
 #### Administrar
 
 ![](./readme-dashboard-administrar.png)

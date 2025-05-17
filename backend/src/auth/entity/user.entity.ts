@@ -47,13 +47,13 @@ export class User {
   })
   role: UserRole;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 10000000000000000000, scale: 2, default: 0 })
   balanceCOP: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 10000000000000000000, scale: 2, default: 0 })
   balanceUSD: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: 'decimal', precision: 10000000000000000000, scale: 2, default: 0 })
   balanceEUR: number;
 
   @Column({ type: 'text', nullable: true })
